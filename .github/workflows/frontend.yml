@@ -15,6 +15,13 @@ on:
       - 'release**'
     tags:
       - '**'
+    paths:
+      - '**/frontend/**'
+      - 'shared/**'
+      - 'docs/**'
+      - '**/package.json'
+      - '**/yarn.lock'
+      - '.github/workflows/**'
 
 jobs:
 
