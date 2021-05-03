@@ -13,18 +13,8 @@ on:
     branches:
       - master
       - 'release**'
-      - 'feature**'
-      - 'fix**'
-      - 'ci**'
     tags:
       - '**'
-    paths:
-      - '**/frontend/**'
-      - 'shared/**'
-      - 'docs/**'
-      - '**/package.json'
-      - '**/yarn.lock'
-      - '.github/workflows/**'
 
 jobs:
 
