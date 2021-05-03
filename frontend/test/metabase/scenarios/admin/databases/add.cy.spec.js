@@ -58,7 +58,7 @@ describe("scenarios > admin > databases > add", () => {
     cy.visit("/admin/databases/create");
 
     typeField("Name", "Test db name");
-    typeField("Host", "localhost  \n  ");
+    typeField("Host", "localhost  \n ");
     typeField("Database name", " test_postgres_db");
     typeField("Username", "uberadmin");
 
