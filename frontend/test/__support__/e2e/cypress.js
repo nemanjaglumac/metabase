@@ -15,7 +15,7 @@ export function restore(name = "default") {
   cy.request("POST", `/api/testing/restore/${name}`);
 }
 
-// various Metabase-specific "scoping" functions like inside popover/modal/navbar/main/sidebar content area
+// Various Metabase-specific "scoping" functions like inside popover/modal/navbar/main/sidebar content area
 export function popover() {
   return cy.get(".PopoverContainer.PopoverContainer--open");
 }
