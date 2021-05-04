@@ -4,7 +4,6 @@ api.basename = "";
 import mock, { once } from "xhr-mock";
 
 describe("api", () => {
-  // Dummy comment
   beforeEach(() => mock.setup());
   afterEach(() => mock.teardown());
 
