@@ -16,7 +16,7 @@ jobs:
     environment:
       ${{ github.event_name == 'pull_request_target' &&
       github.event.pull_request.head.repo.full_name != github.repository &&
-      'external' || 'internal' }}
+      'external' || '' }}
     runs-on: ubuntu-22.04
     steps:
       - run: echo "true"
