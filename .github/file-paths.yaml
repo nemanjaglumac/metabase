@@ -1,13 +1,11 @@
 default: &default
   - "locales/**"
-  - "bin/**"
 
 ci: &ci
   - ".github/**/!(*.md|team.json)"
 
 shared_sources: &shared_sources
   - "shared/src/**"
-  - "src/metabase/lib/**"
 
 shared_specs: &shared_specs
   - "shared/test/**"
