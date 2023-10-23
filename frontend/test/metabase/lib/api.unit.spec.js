@@ -7,7 +7,6 @@ describe("api", () => {
 
   it("should GET", async () => {
     fetchMock.get("path:/hello", successResponse);
-    const hello = GET("/hello");
     const response = await hello();
     expect(response).toEqual({ status: "ok" });
   });
