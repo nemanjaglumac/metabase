@@ -1,6 +1,5 @@
 (ns metabase.actions.execution
   (:require
-   [clojure.set :as set]
    [medley.core :as m]
    [metabase.actions :as actions]
    [metabase.actions.http-action :as http-action]
