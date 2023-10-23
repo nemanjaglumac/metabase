@@ -36,7 +36,6 @@ const AccountHeader = ({ user, path, onChangeLocation }) => {
     [hasPasswordChange],
   );
 
-  const userFullName = getFullName(user);
 
   return (
     <AccountHeaderRoot data-testid="account-header">
