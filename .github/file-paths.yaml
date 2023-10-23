@@ -1,6 +1,5 @@
 default: &default
   - "locales/**"
-  - "bin/**"
 
 ci: &ci
   - ".github/**/!(*.md|team.json)"
