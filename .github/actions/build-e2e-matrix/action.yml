@@ -25,32 +25,9 @@ runs:
           };
 
           const testSets = [
-            ["actions", {} ],
-            ["admin", {} ],
-            ["admin-2", {} ],
-            ["binning", {} ],
-            ["collections", {} ],
-            ["custom-column", {} ],
-            ["dashboard", {} ],
-            ["dashboard-cards", {} ],
-            ["dashboard-filters", {} ],
-            ["embedding", {} ],
-            ["filters", {} ],
-            ["joins", {} ],
-            ["models", {} ],
-            ["native", {} ],
-            ["native-filters", {} ],
-            ["onboarding", {} ],
-            ["organization", {} ],
-            ["permissions", {} ],
-            ["question", {} ],
-            ["sharing", {} ],
-            ["visualizations-charts", {} ],
-            ["visualizations-tabular", {} ],
-            ["oss-subset", { edition: 'oss', context: "special" } ],
-            ["slow", { context: "special" } ],
-            ["flaky", { context: "special" } ],
-            ["mongo", { context: "qa-database" } ],
+
+            ["question", {containers: [1,2,3]} ],
+
           ];
 
           const config = testSets.map(([name, specialOptions]) => {

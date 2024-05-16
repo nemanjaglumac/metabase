@@ -55,21 +55,22 @@ jobs:
       MB_EDITION: ${{ matrix.edition }}
       INTERACTIVE: false
     steps:
-      - uses: actions/checkout@v4
-      - name: Prepare front-end environment
-        uses: ./.github/actions/prepare-frontend
-      - name: Prepare back-end environment
-        uses: ./.github/actions/prepare-backend
-        with:
-          m2-cache-key: e2e-tests
+      - run: echo "hi"
+      # - uses: actions/checkout@v4
+      # - name: Prepare front-end environment
+      #   uses: ./.github/actions/prepare-frontend
+      # - name: Prepare back-end environment
+      #   uses: ./.github/actions/prepare-backend
+      #   with:
+      #     m2-cache-key: e2e-tests
 
-      - name: Build uberjar with ./bin/build.sh
-        run: ./bin/build.sh
+      # - name: Build uberjar with ./bin/build.sh
+      #   run: ./bin/build.sh
 
-      - name: Prepare uberjar artifact
-        uses: ./.github/actions/prepare-uberjar-artifact
-        with:
-          name: metabase-${{ matrix.edition }}-${{ github.event.pull_request.head.sha || github.sha }}-uberjar
+      # - name: Prepare uberjar artifact
+      #   uses: ./.github/actions/prepare-uberjar-artifact
+      #   with:
+      #     name: metabase-${{ matrix.edition }}-${{ github.event.pull_request.head.sha || github.sha }}-uberjar
 
   e2e-tests:
     needs: [build, e2e-matrix-builder]
@@ -90,12 +91,11 @@ jobs:
       COMMIT_INFO_MESSAGE : ${{ github.event.pull_request.title || github.event.head_commit.message || github.even.head.sha }}
       MB_SNOWPLOW_AVAILABLE: true
       MB_SNOWPLOW_URL: "http://localhost:9090" # Snowplow micro
-      CYPRESS_REPLAYIO_ENABLED: 1
-      CYPRESS_REPLAYIO_ENABLE_UPLOAD: 1
       RECORD_REPLAY_METADATA_FILE: /tmp/replay-metadata.json
       RECORD_REPLAY_METADATA_TEST_RUN_ID: ${{ github.run_id }}
-      REPLAY_API_KEY: ${{ secrets.REPLAY_IO_TOKEN }}
       TZ: US/Pacific # to make node match the instance tz
+      SPLIT: 3
+      SPLIT_INDEX: ${{ strategy.job-index }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.e2e-matrix-builder.outputs.matrix) }}

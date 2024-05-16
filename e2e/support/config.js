@@ -5,6 +5,7 @@ const {
   NodeModulesPolyfillPlugin,
 } = require("@esbuild-plugins/node-modules-polyfill");
 const replay = require("@replayio/cypress");
+const cypressSplit = require("cypress-split");
 
 const {
   removeDirectory,
@@ -37,6 +38,7 @@ const convertStringToInt = string =>
 const defaultConfig = {
   // This is the functionality of the old cypress-plugins.js file
   setupNodeEvents(on, config) {
+    cypressSplit(on, config);
     // `on` is used to hook into various events Cypress emits
     // `config` is the resolved Cypress config
     /********************************************************************
