@@ -44,7 +44,7 @@ jobs:
             if (Array.isArray(linkedIssues) && linkedIssues.length > 0) {
               console.log('linked issue(s) found');
 
-              linkedIssues.forEach((issueId, index) => {
+              linkedIssues.forEach(async (issueId, index) => {
                 const issue = await github.rest.issues.get({
                   owner,
                   repo,
