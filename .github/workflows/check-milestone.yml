@@ -2,9 +2,6 @@ name: Milestone Reminder
 
 on:
   pull_request:
-    types: [closed]
-    branches:
-      - "master"
 
 jobs:
   milestone-reminder:
