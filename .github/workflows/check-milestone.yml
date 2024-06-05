@@ -12,15 +12,19 @@ jobs:
       pull-requests: write
       issues: read
     steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: release
+      - name: Prepare build scripts
+        run: cd ${{ github.workspace }}/release && yarn && yarn build
       - uses: actions/github-script@v7
         with:
           script: | # js
-            const { getLinkedIssues } = require('${{ github.workspace }}/release/utils/linked-issues');
+            const { getLinkedIssues } = require('${{ github.workspace }}/release/dist/index.cjs');
             const owner = context.repo.owner;
             const repo = context.repo.repo;
 
             const pullNumber = '${{ github.event.pull_request.number }}';
-
 
             function getMilestone(pullOrIssue) {
               // pull has pull.data.milestone, issue has issue.milestone
