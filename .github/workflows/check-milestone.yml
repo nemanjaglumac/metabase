@@ -43,7 +43,8 @@ jobs:
             }
 
             // the github API doesn't expose linked issues, so we have to parse the body ourselves
-            const linkedIssues = getLinkedIssues(pull);
+            const prDescription = pull.data.body;
+            const linkedIssues = getLinkedIssues(prDescription);
 
             if (Array.isArray(linkedIssues) && linkedIssues.length > 0) {
               console.log('linked issue(s) found');
