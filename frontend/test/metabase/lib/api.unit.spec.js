@@ -1,7 +1,7 @@
 import fetchMock from "fetch-mock";
 
 import api, { GET, POST, PUT } from "metabase/lib/api";
-api.basename = "";
+
 
 describe("api", () => {
   const successResponse = { body: { status: "ok" } };

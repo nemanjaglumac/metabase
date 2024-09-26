@@ -53,7 +53,6 @@ function dependencies() {
         },
       });
     } catch (e) {
-      console.error(filename, e.toString());
       process.exit(-1);
     }
     const base = path.dirname(filename) + path.sep;
