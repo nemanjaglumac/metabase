@@ -1,0 +1,45 @@
+name: "Quarantine gate demo — Style 2 ($GITHUB_STEP_SUMMARY)"
+description: >
+  DUMMY preview of DEV-2269 visibility style 2. Writes the (fake) verdict as a
+  markdown block to $GITHUB_STEP_SUMMARY so it renders on the run summary page,
+  one block per job, no log-digging. Gated to the ACTIONABLE case only (a
+  non-quarantined 'red' failure) so the full matrix does not swamp the page.
+
+inputs:
+  suite:
+    description: "Suite label shown in the summary block."
+    required: true
+  verdict:
+    description: "Fake gate outcome: pass | quarantined | red."
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        SUITE: ${{ inputs.suite }}
+        VERDICT: ${{ inputs.verdict }}
+      run: |
+        # Only the actionable case gets a summary block. Clean passes and
+        # all-quarantined passes are intentionally silent here — otherwise a
+        # dozens-of-jobs app-db × driver matrix would bury the signal.
+        if [ "${VERDICT}" != "red" ]; then
+          echo "style2: verdict='${VERDICT}' is not actionable — no summary block emitted (by design)."
+          exit 0
+        fi
+
+        {
+          echo "### 🔴 CI Conductor quarantine gate — ${SUITE}"
+          echo ""
+          echo "A **non-quarantined failure** was detected. Under enforcement this job would go **RED**."
+          echo ""
+          echo "| Suite | Verdict | Offending tests |"
+          echo "| --- | --- | --- |"
+          echo "| \`${SUITE}\` | 🔴 red | \`metabase.dummy-test/real-regression\` |"
+          echo ""
+          echo "> _Dry run — this did not fail the job. Preview for DEV-2269._"
+        } >> "$GITHUB_STEP_SUMMARY"
+
+        echo "style2: emitted summary block for actionable failure in suite '${SUITE}'."
+        exit 0

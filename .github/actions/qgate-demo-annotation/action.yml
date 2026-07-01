@@ -1,0 +1,42 @@
+name: "Quarantine gate demo — Style 3 (::notice:: / ::warning::)"
+description: >
+  DUMMY preview of DEV-2269 visibility style 3. Emits ONE annotation per gated
+  job — ::notice:: when all failures are quarantined (or clean), ::warning::
+  when the job would go red under enforcement. Surfaces at the top of the run
+  summary and in the PR Checks tab. The suite label is baked into the message
+  so matrix jobs do not dedup into one annotation.
+
+inputs:
+  suite:
+    description: "Suite label baked into the annotation message (prevents GitHub message-dedup across matrix jobs)."
+    required: true
+  verdict:
+    description: "Fake gate outcome: pass | quarantined | red."
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        SUITE: ${{ inputs.suite }}
+        VERDICT: ${{ inputs.verdict }}
+      run: |
+        # Exactly one annotation per job. No file= anchor — a quarantine verdict
+        # has no single source line; summary/checks placement is the point.
+        # Hard cap is 10 annotations/level/job; one-per-job stays well under it.
+        case "${VERDICT}" in
+          red)
+            echo "::warning::CI Conductor quarantine gate — ${SUITE}: 🔴 non-quarantined failure — would go RED under enforcement (dry run)"
+            ;;
+          quarantined)
+            echo "::notice::CI Conductor quarantine gate — ${SUITE}: 🟡 all failures quarantined — would stay GREEN under enforcement (dry run)"
+            ;;
+          pass)
+            echo "::notice::CI Conductor quarantine gate — ${SUITE}: ✅ no failures (dry run)"
+            ;;
+          *)
+            echo "::warning::CI Conductor quarantine gate — ${SUITE}: ❓ unknown verdict '${VERDICT}' (dry run)"
+            ;;
+        esac
+        exit 0

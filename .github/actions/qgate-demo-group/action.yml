@@ -1,0 +1,54 @@
+name: "Quarantine gate demo — Style 1 (::group::)"
+description: >
+  DUMMY preview of DEV-2269 visibility style 1. Wraps the (fake) quarantine
+  verdict in a named, collapsible ::group:: fold inside the shared action so it
+  is a labeled section in every caller — nested or not. Log-only: improves
+  findability *within* the log but does not lift the verdict above it.
+
+inputs:
+  suite:
+    description: "Suite label baked into the fold title (e.g. backend, e2e, driver:postgres)."
+    required: true
+  verdict:
+    description: "Fake gate outcome: pass | quarantined | red."
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        SUITE: ${{ inputs.suite }}
+        VERDICT: ${{ inputs.verdict }}
+      run: |
+        # Emit the verdict inside a collapsible, labeled fold. The heavy detail
+        # lives inside the fold; the fold title carries the suite so you can
+        # scan for it even when this action is nested in another composite.
+        echo "::group::CI Conductor quarantine gate — ${SUITE} (dry run)"
+        echo "suite:   ${SUITE}"
+        echo "verdict: ${VERDICT}"
+        case "${VERDICT}" in
+          pass)
+            echo "result: ✅ no failures"
+            ;;
+          quarantined)
+            echo "result: 🟡 all failures are quarantined — gate would stay GREEN under enforcement"
+            echo "quarantined tests:"
+            echo "  - metabase.dummy-test/flaky-one"
+            echo "  - metabase.dummy-test/flaky-two"
+            ;;
+          red)
+            echo "result: 🔴 non-quarantined failure — gate would go RED under enforcement"
+            echo "offending tests:"
+            echo "  - metabase.dummy-test/real-regression"
+            ;;
+          *)
+            echo "result: ❓ unknown verdict '${VERDICT}'"
+            ;;
+        esac
+        echo "::endgroup::"
+
+        # Preserve the gate's own exit code across the endgroup. DRY RUN never
+        # fails the job, so we always exit 0 here — but this is the seam where
+        # a real gate would `exit 1` on red under enforcement.
+        exit 0

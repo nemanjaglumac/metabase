@@ -1,0 +1,45 @@
+name: "test-driver (demo)"
+description: >
+  DUMMY stand-in for the real test-driver composite action. Reproduces the
+  DEV-2269 burial problem: the quarantine gate runs nested INSIDE this
+  composite, so at job level everything collapses under this single step and
+  the verdict is buried in its log. This wrapper then invokes all three
+  visibility styles so you can compare how each one surfaces (or doesn't)
+  through the nesting.
+
+inputs:
+  suite:
+    description: "Suite label passed through to every style."
+    required: true
+  verdict:
+    description: "Fake gate outcome: pass | quarantined | red."
+    required: true
+
+runs:
+  using: composite
+  steps:
+    # --- fake "run the tests" work, so the gate is genuinely nested ---
+    - shell: bash
+      env:
+        SUITE: ${{ inputs.suite }}
+      run: |
+        echo "[test-driver-demo] pretending to run tests for suite '${SUITE}'..."
+        echo "[test-driver-demo] wrote fake JUnit to ./target/junit (not really)"
+
+    # --- Style 1: ::group:: log fold (baseline; benefits all callers) ---
+    - uses: ./.github/actions/qgate-demo-group
+      with:
+        suite: ${{ inputs.suite }}
+        verdict: ${{ inputs.verdict }}
+
+    # --- Style 2: $GITHUB_STEP_SUMMARY, actionable-only ---
+    - uses: ./.github/actions/qgate-demo-summary
+      with:
+        suite: ${{ inputs.suite }}
+        verdict: ${{ inputs.verdict }}
+
+    # --- Style 3: annotations (notice/warning) ---
+    - uses: ./.github/actions/qgate-demo-annotation
+      with:
+        suite: ${{ inputs.suite }}
+        verdict: ${{ inputs.verdict }}

@@ -1,0 +1,55 @@
+name: Quarantine gate visibility demo (DEV-2269)
+
+# DUMMY / PREVIEW workflow — not wired to any real CI. Its only purpose is to
+# preview the three proposed visibility styles for the ci-conductor quarantine
+# gate verdict (DEV-2269) across a realistic app-db × driver matrix. Every
+# verdict below is FAKE and hard-coded per matrix entry; nothing is enforced.
+#
+# Trigger it from the Actions tab (workflow_dispatch) or by pushing this branch.
+# Then compare, for the same run:
+#   • Style 1 — open a job → verdict is a labeled ::group:: fold in the log
+#   • Style 2 — the run summary page shows a block ONLY for the red job
+#   • Style 3 — notices/warnings sit at the top of the summary + PR Checks tab
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - qgate-visibility-demo
+
+permissions:
+  contents: read
+
+jobs:
+  gated-matrix:
+    name: ${{ matrix.suite }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # The common case: lots of clean passes (the matrix "noise floor").
+          - { suite: "app-db:postgres · driver:postgres", verdict: pass }
+          - { suite: "app-db:postgres · driver:mysql",    verdict: pass }
+          - { suite: "app-db:postgres · driver:h2",       verdict: pass }
+          - { suite: "app-db:mysql · driver:postgres",    verdict: pass }
+          - { suite: "app-db:mysql · driver:mysql",       verdict: pass }
+          - { suite: "app-db:mysql · driver:h2",          verdict: pass }
+          - { suite: "app-db:h2 · driver:sqlserver",      verdict: pass }
+          # A couple of all-quarantined passes (green under enforcement).
+          - { suite: "app-db:h2 · driver:mongo",          verdict: quarantined }
+          - { suite: "app-db:postgres · driver:oracle",   verdict: quarantined }
+          # The one actionable failure — this is what each style should make findable.
+          - { suite: "app-db:mysql · driver:snowflake",   verdict: red }
+    steps:
+      - uses: actions/checkout@v4
+
+      # The gate is nested inside this composite (composite-inside-composite),
+      # exactly like the real gate nested in test-driver. At job level the whole
+      # thing collapses under this single step — which is the burial DEV-2269 is
+      # about, and the reason styles 2 and 3 route the verdict OUT of the log.
+      - name: test-driver (demo)
+        uses: ./.github/actions/test-driver-demo
+        with:
+          suite: ${{ matrix.suite }}
+          verdict: ${{ matrix.verdict }}
