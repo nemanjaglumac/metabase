@@ -24,7 +24,15 @@ runs:
         # Emit the verdict inside a collapsible, labeled fold. The heavy detail
         # lives inside the fold; the fold title carries the suite so you can
         # scan for it even when this action is nested in another composite.
-        echo "::group::CI Conductor quarantine gate — ${SUITE} (dry run)"
+        # Prefix the fold title with the verdict emoji so the collapsed row
+        # itself signals status before you even expand it.
+        case "${VERDICT}" in
+          pass)        ICON="✅" ;;
+          quarantined) ICON="🟡" ;;
+          red)         ICON="🔴" ;;
+          *)           ICON="❓" ;;
+        esac
+        echo "::group::${ICON} CI Conductor quarantine gate — ${SUITE} (dry run)"
         echo "suite:   ${SUITE}"
         echo "verdict: ${VERDICT}"
         case "${VERDICT}" in

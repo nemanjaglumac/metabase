@@ -22,25 +22,25 @@ permissions:
 
 jobs:
   gated-matrix:
-    name: ${{ matrix.suite }}
+    name: ${{ matrix.icon }} ${{ matrix.suite }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         include:
           # The common case: lots of clean passes (the matrix "noise floor").
-          - { suite: "app-db:postgres · driver:postgres", verdict: pass }
-          - { suite: "app-db:postgres · driver:mysql",    verdict: pass }
-          - { suite: "app-db:postgres · driver:h2",       verdict: pass }
-          - { suite: "app-db:mysql · driver:postgres",    verdict: pass }
-          - { suite: "app-db:mysql · driver:mysql",       verdict: pass }
-          - { suite: "app-db:mysql · driver:h2",          verdict: pass }
-          - { suite: "app-db:h2 · driver:sqlserver",      verdict: pass }
+          - { icon: "✅", suite: "app-db:postgres · driver:postgres", verdict: pass }
+          - { icon: "✅", suite: "app-db:postgres · driver:mysql",    verdict: pass }
+          - { icon: "✅", suite: "app-db:postgres · driver:h2",       verdict: pass }
+          - { icon: "✅", suite: "app-db:mysql · driver:postgres",    verdict: pass }
+          - { icon: "✅", suite: "app-db:mysql · driver:mysql",       verdict: pass }
+          - { icon: "✅", suite: "app-db:mysql · driver:h2",          verdict: pass }
+          - { icon: "✅", suite: "app-db:h2 · driver:sqlserver",      verdict: pass }
           # A couple of all-quarantined passes (green under enforcement).
-          - { suite: "app-db:h2 · driver:mongo",          verdict: quarantined }
-          - { suite: "app-db:postgres · driver:oracle",   verdict: quarantined }
+          - { icon: "🟡", suite: "app-db:h2 · driver:mongo",          verdict: quarantined }
+          - { icon: "🟡", suite: "app-db:postgres · driver:oracle",   verdict: quarantined }
           # The one actionable failure — this is what each style should make findable.
-          - { suite: "app-db:mysql · driver:snowflake",   verdict: red }
+          - { icon: "🔴", suite: "app-db:mysql · driver:snowflake",   verdict: red }
     steps:
       - uses: actions/checkout@v4
 
@@ -48,7 +48,7 @@ jobs:
       # exactly like the real gate nested in test-driver. At job level the whole
       # thing collapses under this single step — which is the burial DEV-2269 is
       # about, and the reason styles 2 and 3 route the verdict OUT of the log.
-      - name: test-driver (demo)
+      - name: 🚦 test-driver (demo)
         uses: ./.github/actions/test-driver-demo
         with:
           suite: ${{ matrix.suite }}
